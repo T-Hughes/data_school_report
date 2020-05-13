@@ -1,0 +1,103 @@
+---
+title: Summer is coming to OzWheat
+subtitle: Effect of high temperature on grain development
+short_title: Summer OzWheat
+
+author:  Trijntje Hughes
+affiliation: CSIRO Agriculture and Food
+photo: resources/img/germwheat.jpg
+
+output: DSreport::project_summary
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  results = 'asis',
+  echo = FALSE,
+  warning = FALSE,
+  message = FALSE,
+  fig.align = 'center'
+)
+
+#Load libraries
+library(tidyverse)
+library(gapminder)
+library(kableExtra)
+```
+
+
+# Introduction
+I joined CSIRO over twenty years ago and have worked on many different projects mostly in wheat and barley. I love working in the laboratory combined with field and glasshouse work. My work involves varied aspects of seed biology, including seed dormancy, seed composition and environmental stresses. Before data school I would enter data either in FieldPrime or Excel and all my data analyses and visualisation was done in Excel. I had no experience writing code at all.
+
+
+# My Project
+This project analyses the effect of high temperatures during the grainfill stages of wheat plants. We grew 230 different wheat varieties selected from the OzWheat panel and 10 landlines that were used in previous experiments. We have phenotypic and genetic data for all lines from other trials.
+Plants were grown under regular glasshouse conditions, scored for flowering date, and at a set developmental stage exposed to a hot spell of 7 days. At plant maturity (node collapse) heads were harvested and the germination of seeds was scored for each plant. Seeds were scanned to measure different parameters of seed size.
+We want to find genotypes that are most sensitive and most insensitive to the heat treatment and determine the genetic basis of heat response to future proof Australian wheat varieties.
+
+![*Plants growing in the glasshouse, tagged for flowering time*](resources/img/flowering.jpg){width=350px}
+
+
+## Preliminary results
+
+This section will demonstrate the different visuals you might want use to show off your 
+project. Don't feel the need to go overboard, this is supposed to give a taste of the work you are
+doing rather than being a publication ready document.
+
+To get tables formatting correctly, use `knitr::kable` to convert the table to html format. If
+you also want to have alternate row highlighting, pass the result to `kable_styling('striped')` 
+from the `kableExtra` package.
+
+**Tables**
+```{r mytable, out.width='100%', echo = T}
+knitr::kable(head(gapminder, n = 5), format = "html", caption = "A table of data") %>% 
+  kable_styling("striped")
+```
+
+**Images from a file**
+
+![](resources/img/tidyverse.png){width=100px}
+
+**Plots from R**
+```{r standard-plot, out.width='60%', fig.align='center', fig.height= 4, fig.width=6, fig.cap="Yet another gapminder plot"}
+gapminder %>% 
+  filter(year == 1987) %>% 
+  ggplot(aes(x = gdpPercap, y = lifeExp, colour = continent, size = pop)) +
+  geom_point() +
+  scale_x_log10(labels = function(b) format(b, scientific = F)) +
+  scale_size(trans = "sqrt", guide = "none") +
+  scale_color_brewer(palette = "Set1") +
+  theme_linedraw() +
+  theme(legend.position = "bottom")
+```
+
+Your figure and table captions are automatically numbered and can be referenced in the text
+if needed: see eg. Table \@ref(tab:mytable) and Figure \@ref(fig:standard-plot)
+
+# My Digital Toolbox
+
+I used Tidyverse to combine data from many seperate data files into 1 'tidy' tibble! I spent a lot of time with ggplot2 looking at the data, finding outliers, trends etc. All of R was totally new to me.
+
+# Favourite tool
+
+I really like the ggplot package, looking at data in many different ways gives a much better insight into what might be going on. What a difference from bar graphs in Excel. Also of course the tidyverse package, what would we do without it?
+
+
+![](resources/img/tidyverse.png){width=100px}
+![](https://raw.githubusercontent.com/tidyverse/ggplot2/master/man/figures/logo.png){.pull-left width=100px}
+
+
+
+# My time went ...
+
+Most of my time went into cleaning and tidying up data, combining data from many files into one file that I and others can succesfully use now and in the future. Many challenges had to be overcome along the way. With no coding experience at all a lot of time went into trying to remember particular terminology.
+
+# Next steps
+
+Next I want to link the results from the heat experiment to all the genetic data we have for the OzWheat lines. I will need to further my knowledge of the particular packages neccesary to achieve that.
+
+# My Data School Experience
+
+Taking time to do Data school is the best thing that happened to me for a while, especially with the timing of it all. Other than giving me a start in learning to code and using R, it has been wonderfull to work on improving data skills whilst having to work from home in Covid-19 times. I really enjoyed learning to use ggplot and seeing all the different options of visualisation of the data. I am very impressed with people in the Data School COmmunity, their willingness to share knowledge, take time for new students to learn and support them. I am looking forward to using new skills in my day to day work.
+
+
+
