@@ -36,42 +36,70 @@ We want to find genotypes that are most sensitive and most insensitive to the he
 
 ![*Plants growing in the glasshouse, tagged for flowering time*](resources/img/flowering.jpg){width=350px}
 
+![*Scan wheat seeds on flatbed scanner - Grainscan*](resources/img/grainscan.jpg){ width=25%}
+
+
+```{r reading dataframe}
+df <- read_csv("data/heat_combined.csv")
+df1 <- df %>% mutate_if(is.numeric, round, digits=1)
+```
+
 
 ## Preliminary results
 
-This section will demonstrate the different visuals you might want use to show off your 
-project. Don't feel the need to go overboard, this is supposed to give a taste of the work you are
-doing rather than being a publication ready document.
-
-To get tables formatting correctly, use `knitr::kable` to convert the table to html format. If
-you also want to have alternate row highlighting, pass the result to `kable_styling('striped')` 
-from the `kableExtra` package.
-
-**Tables**
-```{r mytable, out.width='100%', echo = T}
-knitr::kable(head(gapminder, n = 5), format = "html", caption = "A table of data") %>% 
+```{r mytable, out.width='100%', echo = FALSE}
+knitr::kable(head(df1, n = 5), format = "html", caption = "Preview of some of the data") %>% 
   kable_styling("striped")
 ```
 
-**Images from a file**
-
-![](resources/img/tidyverse.png){width=100px}
-
 **Plots from R**
-```{r standard-plot, out.width='60%', fig.align='center', fig.height= 4, fig.width=6, fig.cap="Yet another gapminder plot"}
-gapminder %>% 
-  filter(year == 1987) %>% 
-  ggplot(aes(x = gdpPercap, y = lifeExp, colour = continent, size = pop)) +
-  geom_point() +
-  scale_x_log10(labels = function(b) format(b, scientific = F)) +
-  scale_size(trans = "sqrt", guide = "none") +
-  scale_color_brewer(palette = "Set1") +
-  theme_linedraw() +
-  theme(legend.position = "bottom")
+```{r plot1, out.width='60%', fig.align='center', fig.height= 4, fig.width=6, fig.cap="Seed size heat-treated vs control"}
+df %>% 
+  group_by(trt) %>% 
+    ggplot()+
+  geom_density(aes(area_mm2, colour = trt))+
+  labs(x = "Seed size (area in mm2)", 
+       y = "density",
+       colour = "Treatment")+ 
+  theme(plot.title = element_text(size = 15, face = "bold"))
 ```
 
-Your figure and table captions are automatically numbered and can be referenced in the text
-if needed: see eg. Table \@ref(tab:mytable) and Figure \@ref(fig:standard-plot)
+```{r plot2, out.width='60%', fig.align='center', fig.height= 4, fig.width=6, fig.cap="Seed size heat-treated vs control "}
+df %>%  na.omit(df) %>% 
+  group_by(trt) %>% 
+  ggplot(aes(minellipse_mm, majellipse_mm, colour = (trt)))+
+  geom_point(alpha =0.5)+
+  geom_smooth(method = "lm")+
+  labs(x = "Average seed width (mm)", 
+       y = "Average seed length (mm)",
+       colour = "Treatment")+ 
+  theme(plot.title = element_text(size = 15, face = "bold"))
+
+
+```
+
+```{r plot3, out.width='60%', fig.align='center', fig.height= 4, fig.width=6, fig.cap="Germination density plot"}
+df %>% na.omit(df) %>% 
+  group_by(trt) %>% 
+  ggplot+
+  geom_density(aes(germination, colour = trt))+
+  labs(x = "Germination %", 
+       y = "density",
+       colour = "Treatment")+ 
+  theme(plot.title = element_text(size = 15, face = "bold"))
+
+```
+
+
+
+
+
+
+
+
+
+
+
 
 # My Digital Toolbox
 
