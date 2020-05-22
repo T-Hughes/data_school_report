@@ -30,13 +30,12 @@ I joined CSIRO over twenty years ago and have worked on many different projects 
 
 
 # My Project
-This project analyses the effect of high temperatures during the grainfill stages of wheat plants. We grew 230 different wheat varieties selected from the OzWheat panel and 10 landlines that were used in previous experiments. We have phenotypic and genetic data for all lines from other trials.
-Plants were grown under regular glasshouse conditions, scored for flowering date, and at a set developmental stage exposed to a hot spell of 7 days. At plant maturity (node collapse) heads were harvested and the germination of seeds was scored for each plant. Seeds were scanned to measure different parameters of seed size.
-We want to find genotypes that are most sensitive and most insensitive to the heat treatment and determine the genetic basis of heat response to future proof Australian wheat varieties.
+This project analyses the effect of high temperatures during the grainfill stages of wheat plants on the dormancy of seeds. Most genotypes grown in Australia have low dormancy, which can lead to pre-harvest sprouting (PHS) if there is rainfall near or at harvest time. For instance in 2010, economic losses due to PHS were estimated at $500 million in SA, NSW and QLD. High temperatures during the growing season can cause higher PHS.
+In this experiment I grew 230 different wheat varieties selected from the OzWheat panel and 10 landraces that were used in previous experiments. We have phenotypic and genetic data for all lines. Plants were grown under regular glasshouse conditions, scored for flowering date, and at a set developmental stage exposed to a hot spell of 7 days. At plant maturity (node collapse) heads were harvested and stored in the freezer to maintain dormancy levels. Seeds were scanned to measure different parameters of seed size and germination tests were performed for each genotype. We want to identify genotypes that are highly sensitive and highly insensitive to heat treatment and determine the genetic basis of heat response on dormancy to future proof Australian wheat varieties.
 
-![*Plants growing in the glasshouse, tagged for flowering time*](resources/img/flowering.jpg){width=350px}
+![](resources/img/flowering.jpg){height=350px}![](resources/img/grainscan.jpg){.pull-right height=350px} 
 
-![*Scan wheat seeds on flatbed scanner - Grainscan*](resources/img/grainscan.jpg){ width=25%}
+<div style="text-align: right">*Plants growing in the glasshouse, tagged for flowering time&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Grainscan wheat seeds on flatbed scanner*</div>
 
 
 ```{r reading dataframe}
@@ -58,18 +57,20 @@ df %>%
   group_by(trt) %>% 
     ggplot()+
   geom_density(aes(area_mm2, colour = trt))+
+  scale_colour_manual( values = c("turquoise4","orangered1"))+
   labs(x = "Seed size (area in mm2)", 
        y = "density",
        colour = "Treatment")+ 
   theme(plot.title = element_text(size = 15, face = "bold"))
 ```
 
-```{r plot2, out.width='60%', fig.align='center', fig.height= 4, fig.width=6, fig.cap="Seed size heat-treated vs control "}
+```{r plot2, out.width='60%', fig.align='center', fig.height= 4, fig.width=6, fig.cap="Seed length and width comparison heat-treated vs control "}
 df %>%  na.omit(df) %>% 
   group_by(trt) %>% 
   ggplot(aes(minellipse_mm, majellipse_mm, colour = (trt)))+
   geom_point(alpha =0.5)+
   geom_smooth(method = "lm")+
+  scale_colour_manual( values = c("turquoise4","orangered1"))+
   labs(x = "Average seed width (mm)", 
        y = "Average seed length (mm)",
        colour = "Treatment")+ 
@@ -78,11 +79,12 @@ df %>%  na.omit(df) %>%
 
 ```
 
-```{r plot3, out.width='60%', fig.align='center', fig.height= 4, fig.width=6, fig.cap="Germination density plot"}
+```{r plot3, out.width='60%', fig.align='center', fig.height= 4, fig.width=6, fig.cap="Germination density plot heat-treated vs control"}
 df %>% na.omit(df) %>% 
   group_by(trt) %>% 
   ggplot+
   geom_density(aes(germination, colour = trt))+
+  scale_colour_manual( values = c("turquoise4","orangered1"))+
   labs(x = "Germination %", 
        y = "density",
        colour = "Treatment")+ 
@@ -90,15 +92,34 @@ df %>% na.omit(df) %>%
 
 ```
 
+```{r plot4, out.width='100%', fig.align='center', fig.height= 3, fig.width=10, fig.cap="Pairwise comparison of germination rate by genotype, ranked by germination of control treatment. This shows that some genotypes are insensitive to the heat treatment, and other genotypes are very senstive to a heat spell."}
+order_gen_control <- df %>% 
+  na.omit(df) %>%
+  select(line, germination, area_mm2, majellipse_mm,
+         minellipse_mm, perimeter_mm, trt) %>%
+  group_by(trt, line) %>%
+  summarise(mean_germ = mean(germination)) %>% 
+  ungroup() %>% 
+  filter(trt=="control") %>% 
+  arrange(mean_germ) %>% 
+  pull(line)
 
+df %>% na.omit(df) %>%
+ select(line, germination, area_mm2, majellipse_mm,
+        minellipse_mm, perimeter_mm, trt) %>%
+group_by(trt, line) %>%
+ summarise(mean_germ = mean(germination)) %>%
+ ggplot(aes(x= factor(line, levels = order_gen_control), y=mean_germ))+
+ geom_point(aes(colour = trt))+
+  scale_colour_manual( values = c("turquoise4","orangered1"))+
+ geom_line(colour = "#bdbdbd")+
+  labs(x = "Genotypes", 
+       y = "Germination (%)",
+       colour = "Treatment") +
+  theme(axis.text.x = element_blank(), 
+        panel.grid.major.x = element_blank())
 
-
-
-
-
-
-
-
+```
 
 
 # My Digital Toolbox
@@ -110,8 +131,10 @@ I used Tidyverse to combine data from many seperate data files into 1 'tidy' tib
 I really like the ggplot package, looking at data in many different ways gives a much better insight into what might be going on. What a difference from bar graphs in Excel. Also of course the tidyverse package, what would we do without it?
 
 
-![](resources/img/tidyverse.png){width=100px}
-![](https://raw.githubusercontent.com/tidyverse/ggplot2/master/man/figures/logo.png){.pull-left width=100px}
+![](resources/img/tidyverse.png){width=115px}
+![](resources/img/purr.jpg){width=150px}
+![](resources/img/ggplot.png){width=100px}
+
 
 
 
@@ -125,7 +148,7 @@ Next I want to link the results from the heat experiment to all the genetic data
 
 # My Data School Experience
 
-Taking time to do Data school is the best thing that happened to me for a while, especially with the timing of it all. Other than giving me a start in learning to code and using R, it has been wonderfull to work on improving data skills whilst having to work from home in Covid-19 times. I really enjoyed learning to use ggplot and seeing all the different options of visualisation of the data. I am very impressed with people in the Data School COmmunity, their willingness to share knowledge, take time for new students to learn and support them. I am looking forward to using new skills in my day to day work.
+Taking time to do Data school is the best thing that happened to me for a while, especially with the timing of it all. Other than giving me a start in learning to code and using R, it has been wonderfull to work on improving data skills whilst having to work from home in Covid-19 times. I really enjoyed learning to use ggplot and seeing all the different options of visualisation of the data. I am very impressed with people in the Data School Community, their willingness to share knowledge, take time for new students to learn and support them. I am looking forward to using new skills in my day to day work.
 
 
 
